@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Provjera EAN-13 barkoda</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-200 min-h-screen flex items-center justify-center px-4">
+
+  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Provjera EAN-13 barkoda</h2>
+
+    <p class="text-gray-600 mb-4">Unesi cijeli EAN-13 barkod (13 znamenki):</p>
+
+    <input type="text" id="eanInput"
+           maxlength="13"
+           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center text-lg tracking-widest"
+           placeholder="Npr. 4006381333934">
+
+    <button onclick="provjeriBarkod()"
+            class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-300">
+      Provjeri
+    </button>
+
+    <div id="rezultat" class="mt-6 text-xl font-semibold"></div>
+  </div>
+
+  <script>
+    function provjeriBarkod() {
+      const input = document.getElementById("eanInput").value;
+      const rezultat = document.getElementById("rezultat");
+
+      if (!/^\d{13}$/.test(input)) {
+        rezultat.innerHTML = '<span class="text-red-600">Unos mora sadržavati točno 13 znamenki.</span>';
+        return;
+      }
+
+      const broj = input.slice(0, 12);
+      const unesenaKontrolna = parseInt(input[12]);
+
+      let sumaNeparne = 0;
+      let sumaParne = 0;
+
+      for (let i = 0; i < 12; i++) {
+        let cifra = parseInt(broj[i]);
+        if ((i + 1) % 2 === 0) {
+          sumaParne += cifra;
+        } else {
+          sumaNeparne += cifra;
+        }
+      }
+
+      let ukupno = sumaParne * 3 + sumaNeparne;
+      let ostatak = ukupno % 10;
+      let izracunataKontrolna = (10 - ostatak) % 10;
+
+      if (izracunataKontrolna === unesenaKontrolna) {
+        rezultat.innerHTML = '<span class="text-green-600">✅ Barkod je točan!</span>';
+      } else {
+        rezultat.innerHTML = '<span class="text-red-600">❌ Barkod je netočan.</span>';
+      }
+    }
+  </script>
+
+</body>
+</html>
